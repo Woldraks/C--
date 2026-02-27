@@ -1,0 +1,136 @@
+# ============================================
+# ТЕСТ МАССИВА
+# ============================================
+MPUSH Array1
+MPUSH Array2
+MPUSH Array3
+PRINT M
+MLENGTH
+MINSERT 1 Array1.5
+PRINT M
+MGET 2
+MREPLACE 2 Array2_New
+PRINT M
+MDEL 1
+PRINT M
+MLENGTH
+
+# ============================================
+# ТЕСТ ОДНОСВЯЗНОГО СПИСКА
+# ============================================
+CLEAR F
+FPUSHHEAD F3
+FPUSHHEAD F2
+FPUSHHEAD F1
+PRINT F
+FLENGTH
+FPUSHTAIL F4
+FPUSHTAIL F5
+PRINT F
+FINSERTAFTER F3 F3.5
+PRINT F
+FINSERTBEFORE F4 F3.7
+PRINT F
+PRINT_REVERSED F
+FDEL F3.5
+PRINT F
+FDELHEAD
+PRINT F
+FDELTAIL
+PRINT F
+FDELBEFORE F4
+PRINT F
+FDELAFTER F2
+PRINT F
+FLENGTH
+
+# ============================================
+# ТЕСТ ДВУСВЯЗНОГО СПИСКА
+# ============================================
+CLEAR L
+LPUSHHEAD L3
+LPUSHHEAD L2
+LPUSHHEAD L1
+PRINT L
+LLENGTH
+LPUSHTAIL L4
+LPUSHTAIL L5
+PRINT L
+LINSERTAFTER L3 L3.5
+PRINT L
+LINSERTBEFORE L4 L3.7
+PRINT L
+PRINT_REVERSED L
+LDEL L3.5
+PRINT L
+LDELHEAD
+PRINT L
+LDELTAIL
+PRINT L
+LDELBEFORE L4
+PRINT L
+LDELAFTER L2
+PRINT L
+LLENGTH
+
+# ============================================
+# ТЕСТ СТЕКА
+# ============================================
+CLEAR S
+SPUSH S1
+SPUSH S2
+SPUSH S3
+PRINT S
+SLENGTH
+SPOP
+PRINT S
+SLENGTH
+SPOP
+PRINT S
+SLENGTH
+
+# ============================================
+# ТЕСТ ОЧЕРЕДИ
+# ============================================
+CLEAR Q
+QPUSH Q1
+QPUSH Q2
+QPUSH Q3
+PRINT Q
+QLENGTH
+QPOP
+PRINT Q
+QLENGTH
+QPOP
+PRINT Q
+QLENGTH
+
+# ============================================
+# ТЕСТ ДЕРЕВА (только целые числа!)
+# ============================================
+CLEAR T
+TINSERT 5
+TINSERT 3
+TINSERT 7
+TINSERT 2
+TINSERT 4
+TINSERT 6
+TINSERT 8
+PRINT T
+TGET 4
+TGET 9
+TDEL 7
+PRINT T
+TDEL 3
+PRINT T
+
+# ============================================
+# ОЧИСТКА ВСЕХ СТРУКТУР
+# ============================================
+CLEAR M
+CLEAR F
+CLEAR L
+CLEAR S
+CLEAR Q
+CLEAR T
+PRINT

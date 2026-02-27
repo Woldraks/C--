@@ -12,8 +12,8 @@ import (
 	"dbms/queue"
 	"dbms/singlylinkedlist"
 	"dbms/stack"
+	"dbms/tree"
 	"dbms/types"
-	
 )
 
 // Глобальные структуры данных
@@ -23,7 +23,7 @@ var (
 	globalLinkedList  *doublylinkedlist.LinkedList
 	globalQueue       *queue.Queue
 	globalStack       *stack.Stack
-	
+	globalTree        *tree.BST
 )
 
 func printHelpMessage() {
@@ -40,6 +40,7 @@ func printHelpMessage() {
 	fmt.Println("  LINSERTAFTER <target> <value>  - вставить после элемента")
 	fmt.Println("  QPUSH <value>                  - добавить в очередь")
 	fmt.Println("  SPUSH <value>                  - добавить в стек")
+	fmt.Println("  TINSERT <value>                - вставить значение в дерево")
 	fmt.Println("")
 	fmt.Println("  === ОПЕРАЦИИ УДАЛЕНИЯ ===")
 	fmt.Println("  MDEL <index>                   - удалить из массива по индексу")
@@ -55,13 +56,23 @@ func printHelpMessage() {
 	fmt.Println("  LDELAFTER <value>              - удалить из двусвязного списка после значения")
 	fmt.Println("  QPOP                           - удалить из очереди (из начала)")
 	fmt.Println("  SPOP                           - удалить из стека (с вершины)")
+	fmt.Println("  TDEL <value>                   - удалить значение из дерева")
 	fmt.Println("")
 	fmt.Println("  === ОПЕРАЦИИ ЧТЕНИЯ ===")
 	fmt.Println("  MGET <index>                   - получить элемент массива по индексу")
+	fmt.Println("  TFIND <value>                  - найти значение в дереве")
+	fmt.Println("  TMIN                           - найти минимальное значение")
+	fmt.Println("  TMAX                           - найти максимальное значение")
+	fmt.Println("  THEIGHT                        - получить высоту дерева")
+	fmt.Println("  TSIZE                          - получить количество узлов")
 	fmt.Println("")
 	fmt.Println("  === ОПЕРАЦИИ ВЫВОДА ===")
-	fmt.Println("  PRINT [structure]              - вывести все структуры или конкретную (M,F,L,Q,S)")
-	fmt.Println("  CLEAR <structure>              - очистить конкретную структуру")
+	fmt.Println("  PRINT [structure]              - вывести все структуры или конкретную (M,F,L,Q,S,T)")
+	fmt.Println("  TPRINTINORDER                   - вывести дерево в порядке возрастания")
+	fmt.Println("  TPRINTPREORDER                   - вывести дерево в прямом порядке")
+	fmt.Println("  TPRINTPOSTORDER                  - вывести дерево в обратном порядке")
+	fmt.Println("  TPRINTTREE                       - вывести структуру дерева")
+	fmt.Println("  CLEAR <structure>              - очистить конкретную структуру (M,F,L,Q,S,T)")
 	fmt.Println("----------------")
 }
 
@@ -352,6 +363,91 @@ func executeCommand(tokens []string) {
 			}
 		}
 
+	// Дерево (T)
+	case "TINSERT":
+		if len(tokens) > 1 {
+			if globalTree == nil {
+				globalTree = tree.New()
+			}
+			globalTree.Insert(tokens[1])
+			fmt.Printf("Вставлено значение: %s\n", tokens[1])
+		}
+
+	case "TDEL":
+		if len(tokens) > 1 && globalTree != nil {
+			err := globalTree.Delete(tokens[1])
+			if err != nil {
+				fmt.Println("Ошибка:", err)
+			} else {
+				fmt.Printf("Удалено значение: %s\n", tokens[1])
+			}
+		}
+
+	case "TFIND":
+		if len(tokens) > 1 && globalTree != nil {
+			found := globalTree.Find(tokens[1])
+			if found != nil {
+				fmt.Printf("Значение '%s' найдено в дереве\n", tokens[1])
+			} else {
+				fmt.Printf("Значение '%s' не найдено\n", tokens[1])
+			}
+		}
+
+	case "TMIN":
+		if globalTree != nil {
+			min, err := globalTree.Min()
+			if err != nil {
+				fmt.Println("Ошибка:", err)
+			} else {
+				fmt.Printf("Минимальное значение: %s\n", min)
+			}
+		}
+
+	case "TMAX":
+		if globalTree != nil {
+			max, err := globalTree.Max()
+			if err != nil {
+				fmt.Println("Ошибка:", err)
+			} else {
+				fmt.Printf("Максимальное значение: %s\n", max)
+			}
+		}
+
+	case "THEIGHT":
+		if globalTree != nil {
+			height := globalTree.Height()
+			fmt.Printf("Высота дерева: %d\n", height)
+		}
+
+	case "TSIZE":
+		if globalTree != nil {
+			size := globalTree.Size()
+			fmt.Printf("Количество узлов: %d\n", size)
+		}
+
+	case "TPRINTINORDER":
+		if globalTree != nil {
+			result := globalTree.InOrder()
+			fmt.Printf("In-order обход (возрастание): %v\n", result)
+		}
+
+	case "TPRINTPREORDER":
+		if globalTree != nil {
+			result := globalTree.PreOrder()
+			fmt.Printf("Pre-order обход (корень-левый-правый): %v\n", result)
+		}
+
+	case "TPRINTPOSTORDER":
+		if globalTree != nil {
+			result := globalTree.PostOrder()
+			fmt.Printf("Post-order обход (левый-правый-корень): %v\n", result)
+		}
+
+	case "TPRINTTREE":
+		if globalTree != nil {
+			globalTree.Print()
+		}
+
 	// Операции вывода
 	case "PRINT":
 		if len(tokens) > 1 {
@@ -382,6 +478,11 @@ func executeCommand(tokens []string) {
 					fmt.Print("Stack: ")
 					globalStack.Print()
 				}
+			case "T":
+				if globalTree != nil {
+					fmt.Print("Tree: ")
+					globalTree.Print()
+				}
 			}
 		} else {
 			// Вывод всех структур
@@ -405,6 +506,10 @@ func executeCommand(tokens []string) {
 				fmt.Print("Stack: ")
 				globalStack.Print()
 			}
+			if globalTree != nil {
+				fmt.Print("Tree: ")
+				globalTree.Print()
+			}
 		}
 
 	case "CLEAR":
@@ -415,26 +520,37 @@ func executeCommand(tokens []string) {
 				if globalArray != nil {
 					globalArray.Clear()
 					globalArray = nil
+					fmt.Println("Массив очищен")
 				}
 			case "F":
 				if globalForwardList != nil {
 					globalForwardList.Clear()
 					globalForwardList = nil
+					fmt.Println("Односвязный список очищен")
 				}
 			case "L":
 				if globalLinkedList != nil {
 					globalLinkedList.Clear()
 					globalLinkedList = nil
+					fmt.Println("Двусвязный список очищен")
 				}
 			case "Q":
 				if globalQueue != nil {
 					globalQueue.Clear()
 					globalQueue = nil
+					fmt.Println("Очередь очищена")
 				}
 			case "S":
 				if globalStack != nil {
 					globalStack.Clear()
 					globalStack = nil
+					fmt.Println("Стек очищен")
+				}
+			case "T":
+				if globalTree != nil {
+					globalTree.Clear()
+					globalTree = nil
+					fmt.Println("Дерево очищено")
 				}
 			}
 		}
@@ -459,7 +575,7 @@ func executeCommandsFromFile(filename string) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		if line != "" {
+		if line != "" && !strings.HasPrefix(line, "#") {
 			tokens := strings.Fields(line)
 			executeCommand(tokens)
 		}
@@ -495,7 +611,7 @@ func removeLastCommandFromFile(filename string) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		if line != "" {
+		if line != "" && !strings.HasPrefix(line, "#") {
 			lines = append(lines, line)
 		}
 	}
@@ -562,5 +678,6 @@ func main() {
 	}
 
 	// Выполнение команд из файла
+	fmt.Printf("Выполнение команд из файла: %s\n", filename)
 	executeCommandsFromFile(filename)
 }
